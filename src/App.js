@@ -95,7 +95,7 @@ class App extends Component {
   }
 
   updateProfile = () => {
-    fetch('http://localhost:3000/image', {
+    fetch('http://localhost:3000/user/entries', {
             method: 'put',
             headers: {'content-type': 'application/json' },
             body: JSON.stringify({
