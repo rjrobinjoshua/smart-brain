@@ -27,7 +27,7 @@ const particleOptions = {
 const initialState = {
   input: '',
   imageUrl:'',
-  box: {},
+  boxes: [],
   route: 'signin',
   isSignedIn: false,
   user:  {
@@ -53,22 +53,15 @@ class App extends Component {
   }
 
   calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('inputImage');
-    const width =  Number(image.width);
-    const height = Number(image.height);
+    const faces = data.outputs[0].data.regions;
     
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow : height - (clarifaiFace.bottom_row * height)
-    }
-  
+    return faces.map(region => 
+            this.caculateBox(region.region_info.bounding_box)); 
   }
 
-  dsiplayFaceBox = (box) => {
-    this.setState({ box: box })
+  dsiplayFaceBox = (boxes) => {
+    console.log(boxes);
+    this.setState({ boxes: boxes })
   }
 
   onInputChange = (event) => {
@@ -77,7 +70,10 @@ class App extends Component {
   
 
   onButtonSubmit = () => {
-    this.setState({ imageUrl: this.state.input});
+    this.setState({ 
+      imageUrl: this.state.input,
+      boxes: []
+    });
 
     fetch(smartBrainApiUrl+'/image', {
       method: 'post',
@@ -93,7 +89,6 @@ class App extends Component {
       }
       this.dsiplayFaceBox(this.calculateFaceLocation(json));
     })
-    .catch(console.log);    
   }
 
   updateProfile = () => {
@@ -122,8 +117,20 @@ class App extends Component {
   }
 
 
+  caculateBox(clarifaiFace) {
+    const image = document.getElementById('inputImage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - (clarifaiFace.right_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height)
+    };
+  }
+
   render() {
-    const { isSignedIn, imageUrl, route, box, user } = this.state;
+    const { isSignedIn, imageUrl, route, boxes, user } = this.state;
     return(
       <div className="App">
         <Particles className='particles'
@@ -135,7 +142,7 @@ class App extends Component {
               <Logo />
               <Rank user={user} />
               <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/> 
-              <FaceRecognition imageUrl={imageUrl} box={box}/>
+              <FaceRecognition imageUrl={imageUrl} boxes={boxes}/>
             </div>
           : (
               (route === 'signin' || route === 'signout')
