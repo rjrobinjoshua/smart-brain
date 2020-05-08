@@ -1,5 +1,6 @@
 import React from 'react';
 
+const smartBrainApiUrl = process.env.REACT_APP_SMART_BRAIN_API_URL;
 
 class Register extends React.Component {
 
@@ -25,7 +26,7 @@ class Register extends React.Component {
     } 
 
     onSubmitRegister = ()=>{
-        fetch('http://localhost:3000/register', { 
+        fetch(smartBrainApiUrl+'/register', { 
             method: 'post',
             headers: {'content-type': 'application/json' },
             body: JSON.stringify({

@@ -9,6 +9,8 @@ import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
 
+const smartBrainApiUrl = process.env.REACT_APP_SMART_BRAIN_API_URL;
+
 const particleOptions = {
   particles: {
     number : {
@@ -77,7 +79,7 @@ class App extends Component {
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input});
 
-    fetch('http://localhost:3000/image', {
+    fetch(smartBrainApiUrl+'/image', {
       method: 'post',
       headers: {'content-type': 'application/json' },
       body: JSON.stringify({
@@ -95,7 +97,7 @@ class App extends Component {
   }
 
   updateProfile = () => {
-    fetch('http://localhost:3000/user/entries', {
+    fetch(smartBrainApiUrl +'/user/entries', {
             method: 'put',
             headers: {'content-type': 'application/json' },
             body: JSON.stringify({

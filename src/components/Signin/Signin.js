@@ -1,5 +1,6 @@
 import React from 'react';
 
+const smartBrainApiUrl = process.env.REACT_APP_SMART_BRAIN_API_URL;
 
 class Signin extends React.Component {
 
@@ -21,8 +22,7 @@ class Signin extends React.Component {
     }
 
     onSubmitSignIn = ()=>{
-
-        fetch('http://localhost:3000/signin', { 
+        fetch(smartBrainApiUrl+'/signin', { 
             method: 'post',
             headers: {'content-type': 'application/json' },
             body: JSON.stringify({
