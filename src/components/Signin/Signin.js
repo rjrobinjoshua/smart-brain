@@ -8,32 +8,33 @@ const signinSchema = yup.object().shape({
     .required("No password provided")
 });
 
+const smartBrainApiUrl = process.env.REACT_APP_SMART_BRAIN_API_URL;
+
 const Signin = (props) => {
-
-    const smartBrainApiUrl = process.env.REACT_APP_SMART_BRAIN_API_URL;
-
-    const logInCard = useRef(null);
 
     const [signInEmail, setSignInEmail] = useState('');
     const [signInPassword, setSignInPassword] = useState('');
 
+    const logInCard = useRef(null);
 
-    const { register, handleSubmit, errors, setError } = useForm({
+    const { register, handleSubmit, errors, setError, clearError, formState } = useForm({
         validationSchema: signinSchema,
         mode: "onBlur"
     });
-
+    const { isSubmitting } = formState;
 
     const onEmailChange =(event) => {
+        clearSigninErr();
         setSignInEmail(event.target.value);
     }
 
     const onPasswordChange =(event) => {
+        clearSigninErr();
         setSignInPassword(event.target.value);
     }
 
-    const onSubmitSignIn = ()=>{
-        fetch(smartBrainApiUrl+'/signin', { 
+    const onSubmitSignIn = async ()=>{
+        await fetch(smartBrainApiUrl+'/signin', { 
             method: 'post',
             headers: {'content-type': 'application/json' },
             body: JSON.stringify({
@@ -47,15 +48,16 @@ const Signin = (props) => {
                 props.loadUser(data);
                 props.onRouteChange('home');
             }else{
-                setError("password","notMatch","Invalid credentials");
-                console.log(errors);
+                setError("signin","notMatch","Invalid credentials");
                 shakeLoginCard();
             }
-        })
+        }).catch(err => {
+            setError("signin","notMatch","Network error, Please try again later");
+            shakeLoginCard();
+        });
     }
 
     const onSubmitKeyPress = (event) => {
-        console.log('event', event);
         var key=event.keyCode || event.which;
         if (key === 13){
             onSubmitSignIn();
@@ -63,11 +65,17 @@ const Signin = (props) => {
     }
 
     const shakeLoginCard = () => {
+        if(logInCard.current !== null) {
+            logInCard.current.classList.add('error-shake');
+            setTimeout(() => {
+                logInCard.current.classList.remove('error-shake');
+            }, 300);
+        }
+    }
 
-        logInCard.current.classList.add('error-shake');
-        setTimeout(() => {
-            logInCard.current.classList.remove('error-shake');
-        }, 300);
+    function clearSigninErr(){
+        if (errors.signin)
+            clearError("signin");
     }
 
     const { onRouteChange } = props;
@@ -87,7 +95,6 @@ const Signin = (props) => {
                         <label className="db fw6 lh-copy f6" htmlFor ="password">Password</label>
                         <input onChange={onPasswordChange} onKeyPress={event => handleSubmit(onSubmitKeyPress(event))} className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100" 
                             type="password" name="password"  id="password" ref={register} />
-                        {console.log('errors', errors)}
                         {errors.password && <p className="error">{errors.password.message}</p>}    
                         </div>
                     </fieldset>
@@ -95,8 +102,9 @@ const Signin = (props) => {
                         <input
                             onClick={handleSubmit(onSubmitSignIn)}
                             className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" 
-                            type="submit" value="Sign in" 
+                            type="submit" value="Sign in"  disabled={isSubmitting}
                         />
+                    {errors.signin && <p className="error">{errors.signin.message}</p>}      
                     </div>
                     <div className="lh-copy mt3">
                         <p onClick={() => onRouteChange('register')} className="f6 b link dim black db pointer">Register</p>
