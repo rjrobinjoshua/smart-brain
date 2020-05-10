@@ -7,12 +7,28 @@ const FaceRecognition = ({ imageUrl, boxes }) => {
     const faceBoxes = constructBoxes(boxes); 
 
     return(
-            <div className='center ma'>   
-                    <img id='inputImage' alt='userImage' src={imageUrl} width='500px' height='auto'></img>
+            <div id='imageContainer' className='center ma'>   
+                <div className='absolute mt2'>
+                    {imageUrl && <img id='inputImage' alt='userImage' src={imageUrl} width='500px' height='auto'></img>}
+                    {adjustHeight()}
                     {faceBoxes}
+                </div>    
             </div>
     );
+    
 }
+
+// manually need to adjust the container height as the img position is absolute and reuired for clarifai boundary boxes
+const adjustHeight = () => {
+    const image = document.getElementById('inputImage');
+    if(image) {
+        const height = Number(image.height);
+        const imageContainer = document.getElementById('imageContainer');
+        imageContainer.style.height= height +'px';
+    }
+}
+
+
 
 function constructBoxes(boxes) {
     const faceBoxes = [];
