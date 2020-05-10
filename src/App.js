@@ -70,7 +70,7 @@ class App extends Component {
   }
   
 
-  onButtonSubmit = () => {
+  onButtonSubmit = async () => {
     this.setState({ 
       imageUrl: this.state.input,
       boxes: [],
@@ -79,7 +79,7 @@ class App extends Component {
 
     const { user } = this.state;
 
-    fetch(smartBrainApiUrl+'/image', {
+    await fetch(smartBrainApiUrl+'/image', {
       method: 'post',
       headers: this.createHeader(user),
       body: JSON.stringify({
