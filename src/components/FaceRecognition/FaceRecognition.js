@@ -8,10 +8,8 @@ const FaceRecognition = ({ imageUrl, boxes }) => {
 
     return(
             <div className='center ma'>   
-                <div className='absolute mt2'>
-                    <img id='inputImage' alt='userImage' src={imageUrl} width='500px' height='auto'></img>
+                    <img id='inputImage' alt='userImage' src="https://kprofiles.com/wp-content/uploads/2019/07/fotg.gif" width='500px' height='auto'></img>
                     {faceBoxes}
-                </div>
             </div>
     );
 }

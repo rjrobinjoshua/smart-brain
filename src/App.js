@@ -185,6 +185,11 @@ class App extends Component {
               : <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser}/>
             )
         }
+        <div>
+          <footer>
+            <p>Copyright &copy; Robin Joshua {new Date().getFullYear()}</p>
+          </footer>
+        </div>
       </div>
 
     )
