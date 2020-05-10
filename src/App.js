@@ -8,6 +8,7 @@ import Particles from 'react-particles-js';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
+import header from 'basic-auth-header';
 
 const smartBrainApiUrl = process.env.REACT_APP_SMART_BRAIN_API_URL;
 
@@ -36,7 +37,8 @@ const initialState = {
     email: '',
     entries: 0,
     joined: ''
-  }
+  },
+  error: ''
 }
 class App extends Component {
 
@@ -59,8 +61,7 @@ class App extends Component {
             this.caculateBox(region.region_info.bounding_box)); 
   }
 
-  dsiplayFaceBox = (boxes) => {
-    console.log(boxes);
+  displayFaceBox = (boxes) => {
     this.setState({ boxes: boxes })
   }
 
@@ -72,39 +73,58 @@ class App extends Component {
   onButtonSubmit = () => {
     this.setState({ 
       imageUrl: this.state.input,
-      boxes: []
+      boxes: [],
+      error: ''
     });
+
+    const { user } = this.state;
 
     fetch(smartBrainApiUrl+'/image', {
       method: 'post',
-      headers: {'content-type': 'application/json' },
+      headers: this.createHeader(user),
       body: JSON.stringify({
           url: this.state.input
       })
     })
+    .then(this.handleErrors)
     .then( res => res.json())
     .then(json => {
       if(json){
         this.updateProfile();
       }
-      this.dsiplayFaceBox(this.calculateFaceLocation(json));
+      this.displayFaceBox(this.calculateFaceLocation(json));
     })
+    .catch(err => {
+      console.log(err);
+      this.setState({error: err.message});
+    });
   }
 
   updateProfile = () => {
+    const { user } = this.state;
     fetch(smartBrainApiUrl +'/user/entries', {
             method: 'put',
-            headers: {'content-type': 'application/json' },
+            headers: this.createHeader(user),
             body: JSON.stringify({
                 id: this.state.user.id
             })
           })
+          .then(this.handleErrors)
           .then( res => res.json())
           .then(updatedUser => {
-            this.setState({ user: updatedUser});
+            this.setState({
+              user: {
+                ...this.state.user,
+                entries : updatedUser.entries
+              } 
+            });
           })
-          .catch(console.log);
+          .catch(err => {
+            console.log(err);
+            this.setState({error: err.message});
+          });
   }
+
 
   onRouteChange = (route) => {
     if(route === 'signout'){
@@ -116,6 +136,21 @@ class App extends Component {
     this.setState({ route: route});
   }
 
+
+
+  createHeader(user) {
+    return {
+      'content-type': 'application/json',
+      'Authorization': header(user.email, user.password)
+    };
+  }
+
+  handleErrors(response) {
+      if (!response.ok) {
+          throw Error(response.statusText);
+      }
+      return response;
+  }
 
   caculateBox(clarifaiFace) {
     const image = document.getElementById('inputImage');
@@ -130,7 +165,7 @@ class App extends Component {
   }
 
   render() {
-    const { isSignedIn, imageUrl, route, boxes, user } = this.state;
+    const { isSignedIn, imageUrl, route, boxes, user, error } = this.state;
     return(
       <div className="App">
         <Particles className='particles'
@@ -141,8 +176,8 @@ class App extends Component {
           ? <div> 
               <Logo />
               <Rank user={user} />
-              <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/> 
-              <FaceRecognition imageUrl={imageUrl} boxes={boxes}/>
+              <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} error={error}/> 
+              <FaceRecognition imageUrl={imageUrl} boxes={boxes} />
             </div>
           : (
               (route === 'signin' || route === 'signout')

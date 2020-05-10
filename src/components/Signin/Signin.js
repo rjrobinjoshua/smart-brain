@@ -34,6 +34,7 @@ const Signin = (props) => {
     }
 
     const onSubmitSignIn = async ()=>{
+        
         await fetch(smartBrainApiUrl+'/signin', { 
             method: 'post',
             headers: {'content-type': 'application/json' },
@@ -45,6 +46,7 @@ const Signin = (props) => {
         .then(res => res.json())
         .then(data => {
             if(data.id){
+                data.password=signInPassword;
                 props.loadUser(data);
                 props.onRouteChange('home');
             }else{
