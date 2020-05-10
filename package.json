@@ -15,6 +15,7 @@
     "react-particles-js": "^3.2.1",
     "react-scripts": "3.4.1",
     "tachyons": "^4.12.0",
+    "webfontloader": "^1.6.28",
     "yup": "^0.28.5"
   },
   "scripts": {

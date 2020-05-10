@@ -4,6 +4,13 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'tachyons';
+import WebFont from 'webfontloader';
+
+WebFont.load({
+  google: {
+    families: ['Source Sans Pro', 'sans-serif']
+  }
+});
 
 ReactDOM.render(
   <React.StrictMode>
