@@ -2,30 +2,20 @@ import React from 'react';
 import './FaceRecognition.css'
 
 
-const FaceRecognition = ({ imageUrl, boxes }) => {
+const FaceRecognition = ({ image, boxes }) => {
 
     const faceBoxes = constructBoxes(boxes); 
 
     return(
-            <div id='imageContainer' className='center ma'>   
-                <div className='absolute mt2'>
-                    {imageUrl && <img id='inputImage' alt='userImage' src={imageUrl} width='500px' height='auto'></img>}
-                    {adjustHeight()}
+            <div id='imageContainer' className='center ma mt2'>   
+                 
+                {image.url && <img id='inputImage' alt='userImage' src={image.url} width='500px' height='auto'></img>}
+                <div className='absolute' style ={{'width':'500px', 'height': image.height}}> 
                     {faceBoxes}
                 </div>    
             </div>
     );
     
-}
-
-// manually need to adjust the container height as the img position is absolute and reuired for clarifai boundary boxes
-const adjustHeight = () => {
-    const image = document.getElementById('inputImage');
-    if(image) {
-        const height = Number(image.height);
-        const imageContainer = document.getElementById('imageContainer');
-        imageContainer.style.height= height +'px';
-    }
 }
 
 
