@@ -54,6 +54,7 @@ const Register = (props) => {
         .then(res => res.json())
         .then(user => {
             if(user.id){
+                user.password=password;
                 props.loadUser(user);
                 props.onRouteChange('home');
             }else {
