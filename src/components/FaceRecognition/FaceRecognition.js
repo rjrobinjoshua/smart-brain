@@ -8,9 +8,8 @@ const FaceRecognition = ({ image, boxes }) => {
 
     return(
             <div id='imageContainer' className='center ma mt2'>   
-                 
                 {image.url && <img id='inputImage' alt='userImage' src={image.url} width='500px' height='auto'></img>}
-                <div className='absolute' style ={{'width':'500px', 'height': image.height}}> 
+                <div className='absolute' style ={{'width':image.width, 'height': image.height}}> 
                     {faceBoxes}
                 </div>    
             </div>

@@ -29,7 +29,8 @@ const initialState = {
   input: '',
   image: {
     url: '',
-    height: 0
+    height: 0,
+    width: 0
   },
   boxes: [],
   route: 'signin',
@@ -74,7 +75,8 @@ class App extends Component {
       boxes: boxes,
       image: {
         ...this.state.image,
-        height: height
+        height: height,
+        width: width
       } })
   }
 
