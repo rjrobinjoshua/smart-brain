@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) Robin Joshua 2020
+Copyright (c) 2020 Robin Joshua
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
